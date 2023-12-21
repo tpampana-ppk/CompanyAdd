@@ -191,7 +191,7 @@ const CheckboxesTags = () => {
                 onChange={(e) => handleInputChange('primaryPhoneNumber', e.target.value)}
                 error={Boolean(formErrors.primaryPhoneNumber)}
                 helperText={formErrors.primaryPhoneNumber}
-              />
+              /> 
             </Grid>
             <Grid item xs={6}>
               <TextField
