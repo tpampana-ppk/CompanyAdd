@@ -1,0 +1,123 @@
+// import { Admin, Tutorial, Simulation } from '../types/types';
+// import { getAdmins, getSimulations, getTutorials } from '../ApiCallls/apiCalls';
+// import  { useEffect } from 'react';
+
+
+// export const useFetch = () =>{
+//     useEffect(() => {
+//     const simulationData = async () => {
+//       try {
+//         const data = await getSimulations();
+//         if (data) {
+//          const simulationNames: string[] = data.map((simulation: Simulation) => simulation.simulationName);
+
+//          return simulationNames
+          
+//         } else {
+//           console.error('Data is undefined');
+//         }
+//       } catch (error) {
+//         console.error('Error fetching data:', error);
+//       }
+//     };
+//     simulationData();
+
+//     const tutorialData = async () => {
+//       try {
+//         const data = await getTutorials();
+//         if (data) {
+//           const tutorialNames: string[] = [];
+
+//           Object.keys(data).forEach((key: string) => {
+//             const tutorial:Tutorial = data[key as keyof typeof data];
+//             tutorialNames.push(tutorial.tutorialName);
+//           });
+//           return tutorialNames;
+//         } else {
+//           console.error('Data is undefined');
+//         }
+//       } catch (error) {
+//         console.error('Error fetching data:', error);
+//       }
+//     };
+//     tutorialData();
+
+//     const adminData = async () => {
+//       try {
+//         const data = await getAdmins();
+//         if (data) {
+//           const adminNames: string[] = [];
+
+//           Object.keys(data).forEach((key: string) => {
+//             const admin: Admin = data[key as keyof typeof data];
+//             adminNames.push(admin.username);
+//           });
+//           return adminNames;
+//         } else {
+//           console.error('Data is undefined');
+//         }
+//       } catch (error) {
+//         console.error('Error fetching data:', error);
+//       }
+//     };
+//     adminData();
+//   }, []);
+// }
+
+
+
+
+import { useEffect, useState } from 'react';
+import { Admin, Tutorial, Simulation } from '../types/types';
+import { getAdmins, getSimulations, getTutorials } from '../ApiCallls/apiCalls';
+
+export const useFetch = () => {
+  const [simulationsData, setSimulationsData] = useState<string[]>([]);
+  const [tutorialsData, setTutorialsData] = useState<string[]>([]);
+  const [adminData, setAdminData] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [simulations, tutorials, admins] = await Promise.all([
+          getSimulations(),
+          getTutorials(),
+          getAdmins(),
+        ]);
+
+        if (simulations) {
+          const simulationNames: string[] = simulations.map(
+            (simulation: Simulation) => simulation.simulationName
+          );
+          setSimulationsData(simulationNames);
+        } else {
+          console.error('Simulations data is undefined');
+        }
+
+        if (tutorials) {
+          const tutorialNames: string[] = Object.values(tutorials).map(
+            (tutorial: Tutorial) => tutorial.tutorialName
+          );
+          setTutorialsData(tutorialNames);
+        } else {
+          console.error('Tutorials data is undefined');
+        }
+
+        if (admins) {
+          const adminNames: string[] = Object.values(admins).map(
+            (admin: Admin) => admin.username
+          );
+          setAdminData(adminNames);
+        } else {
+          console.error('Admins data is undefined');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { simulationsData, tutorialsData, adminData };
+};
