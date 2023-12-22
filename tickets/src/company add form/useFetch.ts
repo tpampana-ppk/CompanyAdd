@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Admin, Tutorial, Simulation } from '../types/types';
 import { getAdmins, getSimulations, getTutorials } from '../ApiCallls/apiCalls';
 
+
 export const useFetch = () => {
-  const [simulationsData, setSimulationsData] = useState<string[]>([]);
-  const [tutorialsData, setTutorialsData] = useState<string[]>([]);
-  const [adminData, setAdminData] = useState<string[]>([]);
+  const [simulationsData, setSimulationsData] = useState<{ id: string; name:string}[]>([]);
+  const [tutorialsData, setTutorialsData] = useState<{ id: string; tutorname: string; }[]>([]);
+  const [adminData, setAdminData] = useState<{ id: string; username: string; }[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,30 +18,34 @@ export const useFetch = () => {
         ]);
 
         if (simulations) {
-          const simulationNames: string[] = simulations.map(
-            (simulation: Simulation) => simulation.simulationName
-          );
-          setSimulationsData(simulationNames);
+          const simulationDataFormatted = Object.values(simulations).map((simulation: Simulation) => ({
+            id: simulation._id,
+            name:simulation.simulationName
+          }));
+          setSimulationsData(simulationDataFormatted);
         } else {
-          console.error('Simulations data is undefined');
+          console.error('Simulation data is undefined');
         }
 
         if (tutorials) {
-          const tutorialNames: string[] = Object.values(tutorials).map(
-            (tutorial: Tutorial) => tutorial.tutorialName
-          );
-          setTutorialsData(tutorialNames);
+          const tutorialsDataFormatted = Object.values(tutorials).map((tutorial: Tutorial) => ({
+            id: tutorial._id,
+            tutorname: tutorial.tutorialName,
+          }));
+          setTutorialsData(tutorialsDataFormatted);
         } else {
           console.error('Tutorials data is undefined');
         }
 
+
         if (admins) {
-          const adminNames: string[] = Object.values(admins).map(
-            (admin: Admin) => admin.username
-          );
-          setAdminData(adminNames);
+          const adminDataFormatted = Object.values(admins).map((admin: Admin) => ({
+            id: admin._id,
+            username: admin.username,
+          }));
+          setAdminData(adminDataFormatted);
         } else {
-          console.error('Admins data is undefined');
+          console.error('Admin data is undefined');
         }
       } catch (error) {
         console.error('Error fetching data:', error);

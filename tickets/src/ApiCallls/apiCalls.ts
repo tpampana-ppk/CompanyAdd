@@ -1,7 +1,7 @@
 import axios from "axios";
-import { MyFormData } from "../types/formTypes";
+import { MyFormData1 } from "../types/formTypes";
 import { Admin, Simulation, Tutorial } from "../types/types";
-const authToken=`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWQ2YjQzYzFjNmI2ZjM5M2E4OGY1YzI0IiwidXVpZCI6ImI0ZjkwYmRkLTNlMTctNGRjNS1hYjhkLTdmZDY0Y2U5Yjg0ZSIsInBhc3N3b3JkX2V4cGlyZWQiOmZhbHNlLCJpYXQiOjE3MDMxMzk3MDIsImV4cCI6MTcwMzE0OTcwMn0.2mycmTdIHId_ul4yeEvKh8DTP3fkf1ag7UIQveD-s2k`
+const authToken=`eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWQ2YjQzYzFjNmI2ZjM5M2E4OGY1YzI0IiwidXVpZCI6ImIzZWYyYjYyLWVmYmEtNDIzMi04ZjMzLTA3NzBiMjUyODdiOSIsInBhc3N3b3JkX2V4cGlyZWQiOmZhbHNlLCJpYXQiOjE3MDMyMzI1OTEsImV4cCI6MTcwMzI0MjU5MX0.q6qs4YEimpAPUptFOQGX0gKfgmcnTMsUqUZicADXCQg`
 
 const baseUrl = 'https://dev-admin.sunrises.io/api/';
 
@@ -33,6 +33,7 @@ export const getTutorials = async() =>{
 
   if (response.status === 200) {
     const data: Tutorial[] | undefined = response.data;
+    console.log(data);
     return data;
   } else {
     console.error('Failed to fetch simulations:', response.status, response.statusText);
@@ -58,15 +59,26 @@ export const getAdmins = async() =>{
 }
 
 
-export const postData = async(formData:MyFormData) =>{
-  const url = 'create-company';
+export const postData = async(formData:MyFormData1) =>{
 
+const updatedFormData = {
+  ...formData,
+  enableSSO: false
+};
+
+const updatedFormData1 = {
+  ...updatedFormData,
+  sso : {}
+};
+  console.log(updatedFormData1)
+  const url = 'create-company';
   const response = await fetch(baseUrl+url, {
       method: 'POST', 
       headers: {
         'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify(updatedFormData1),
   });    
   if (response.ok) {
       const data: any[] | undefined = await response.json();
@@ -75,5 +87,16 @@ export const postData = async(formData:MyFormData) =>{
       console.error('Failed to post data:', response.status, response.statusText);
     }
 
-  console.log(formData);
 }
+
+
+
+
+
+
+
+
+
+
+
+
