@@ -3,7 +3,7 @@ import { Admin, Tutorial, Simulation } from '../types/types';
 import { getAdmins, getSimulations, getTutorials } from '../ApiCallls/apiCalls';
 
 
-export const useFetch = () => {
+export const useFetch = (tocken:string) => {
   const [simulationsData, setSimulationsData] = useState<{ id: string; name:string}[]>([]);
   const [tutorialsData, setTutorialsData] = useState<{ id: string; tutorname: string; }[]>([]);
   const [adminData, setAdminData] = useState<{ id: string; username: string; }[]>([]);
@@ -12,9 +12,9 @@ export const useFetch = () => {
     const fetchData = async () => {
       try {
         const [simulations, tutorials, admins] = await Promise.all([
-          getSimulations(),
-          getTutorials(),
-          getAdmins(),
+          getSimulations(tocken),
+          getTutorials(tocken),
+          getAdmins(tocken),
         ]);
 
         if (simulations) {

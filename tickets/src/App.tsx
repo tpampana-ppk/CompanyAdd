@@ -1,39 +1,25 @@
-// import { Button } from "@mui/material"
-// import {useState} from 'react';
-// import AddComponent from "./formik/Add";
-// import EditComponent from "./formik/Edit";
-// const App = () => {
-//   const [addSelect,setAddSelect]=useState<boolean>(true);
-//   const [editSelect,setEditSelect]=useState<boolean>(false);
-
-import CheckboxesTags from "./company add form/Company_add_form"
-
-//   return (
-//     <>
-//       <Button onClick={()=>{setAddSelect(true),setEditSelect(false)}}>Add</Button>
-//       <Button onClick={()=>{setAddSelect(false),setEditSelect(true)}}>Edit</Button>
-//       {
-//         addSelect && <AddComponent />
-//       }
-//       {
-//         editSelect && <EditComponent />
-//       }
-//     </>
-//   )
-// }
-
-// export default App
-
-
-
-
-
+import CheckboxesTags from "./company add form/Company_add_form";
+import { useState } from "react";
+import AuthTocken from "./company add form/AuthTocken";
+import { authTocken } from "./context/authContext";
 const App = () => {
-  return (
-    <div>
-      <CheckboxesTags />
-    </div>
-  )
-}
+  const [tocken, setTocken] = useState<string>("");
+  const [auth, setAuth] = useState<boolean>(true);
+  const handleSubmit = (tocken: string) => {
+    setTocken(tocken);
+    setAuth(false);
+  };
 
-export default App
+  return (
+    <>
+      {auth && <AuthTocken onSubmit={handleSubmit} />}
+      {!auth && (
+        <authTocken.Provider value={{ tocken }}>
+          <CheckboxesTags />
+        </authTocken.Provider>
+      )}
+    </>
+  );
+};
+
+export default App;

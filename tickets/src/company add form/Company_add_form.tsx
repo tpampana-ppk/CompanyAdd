@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -6,10 +6,13 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { Grid, Button } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import { postData } from "../ApiCallls/apiCalls";
 
 import { FormErrors, MyFormData } from "../types/formTypes";
 import { useFetch } from "./useFetch";
+import { authTocken } from "../context/authContext";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -39,6 +42,9 @@ const CheckboxesTags = () => {
 
   const [formData, setFormData] = useState<MyFormData>(initialFormData);
   const [formErrors, setFormErrors] = useState<FormErrors>(initialFormErrors);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const { tocken } = useContext(authTocken);
 
   const handleInputChange = (field: keyof MyFormData, value: any) => {
     setFormData((prevData) => ({ ...prevData, [field]: value }));
@@ -54,7 +60,7 @@ const CheckboxesTags = () => {
       return { ...prevErrors, [field]: error };
     });
   };
-  const { simulationsData, tutorialsData, adminData } = useFetch();
+  const { simulationsData, tutorialsData, adminData } = useFetch(tocken);
 
   const handleSubmit = async () => {
     const errors: Partial<FormErrors> = {};
@@ -82,14 +88,23 @@ const CheckboxesTags = () => {
     };
 
     console.log(updatedFormData);
-    const data = await postData(updatedFormData);
-    console.log(data);
+    const data = await postData(updatedFormData, tocken);
+    if (data!.status == 200) {
+      handleShowAlert();
+    }
   };
 
   const areAllFieldsFilled = Object.values(formData).every((value) =>
     Array.isArray(value) ? value.length > 0 : value.trim() !== ""
   );
 
+  const handleShowAlert = () => {
+    setShowAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+  };
   return (
     <div
       style={{
@@ -106,6 +121,12 @@ const CheckboxesTags = () => {
           padding: "20px",
         }}
       >
+        {showAlert && (
+          <Alert severity="success" onClose={handleCloseAlert}>
+            <AlertTitle>Success</AlertTitle>
+            Successfully created new company .
+          </Alert>
+        )}
         <form>
           <Typography
             variant="h4"
